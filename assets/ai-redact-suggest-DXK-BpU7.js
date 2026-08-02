@@ -1,7 +1,0 @@
-async function h(t,a,o,r){var i,s,c,d,l;if(!a||!t)return[];const y=`You are reviewing a construction/architectural drawing for sensitive information that should be redacted before sharing.
-Look for: property owner names, personal information, financial data, security details, or any content that shouldn't be in a public bid set.
-
-Respond with ONLY a JSON array:
-[{"box_2d": [ymin, xmin, ymax, xmax], "label": "what to redact", "confidence": 0.0-1.0, "reason": "why"}]
-
-Coordinates are normalized 0-1000 (ymin, xmin, ymax, xmax). Return [] if nothing needs redaction.`;try{const m=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${a}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{parts:[{inlineData:{mimeType:"image/png",data:t}},{text:y}]}],generationConfig:{responseMimeType:"application/json"}})});if(!m.ok)return[];const n=await m.json(),f=((l=(d=(c=(s=(i=n==null?void 0:n.candidates)==null?void 0:i[0])==null?void 0:s.content)==null?void 0:c.parts)==null?void 0:d[0])==null?void 0:l.text)??"[]",p=JSON.parse(f);return Array.isArray(p)?p.filter(e=>Array.isArray(e.box_2d)&&e.box_2d.length===4&&typeof e.label=="string").map(e=>{const[x,u,g,b]=e.box_2d;return{rect:[u/1e3*o,x/1e3*r,b/1e3*o,g/1e3*r],label:e.label,confidence:e.confidence??.5,reason:e.reason??""}}):[]}catch{return[]}}export{h as suggestRedactions};
